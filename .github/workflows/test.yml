@@ -31,13 +31,13 @@ jobs:
         
       - name: List Tags
         id: tags
-        run: echo "::set-output name=tags::$(git tag --sort=-creatordate)"
+        run: echo "$GITHUB_ENV" >> $GITHUB_ENV && echo "tags=$(git tag --sort=-creatordate)" >> $GITHUB_ENV
 
       - name: Select Tag
         id: select-tag
         run: |
           echo "Available tags:"
-          for tag in ${{ steps.tags.outputs.tags }}; do
+          for tag in ${{ env.tags }}; do
             echo "- $tag"
           done
         env:
