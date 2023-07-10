@@ -15,13 +15,17 @@ jobs:
 
       - name: List Tags
         id: tags
-        run: echo "TAGS=$(git tag --sort=-creatordate)" >> $GITHUB_ENV
+        run: |
+          echo "TAGS=$(git tag --sort=-creatordate)" >> $GITHUB_ENV
+          echo "Tag list:"
+          echo "${TAGS}"
 
       - name: Select Tag
         id: select-tag
         run: |
           echo "Available tags:"
-          for tag in ${{ env.TAGS }}; do
+          IFS=$'\n' read -rd '' -a tag_array <<< "${TAGS}"
+          for tag in "${tag_array[@]}"; do
             echo "- $tag"
           done
 
