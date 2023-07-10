@@ -15,31 +15,25 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  list-tags:
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+    env:
+      SELECTED_TAG: ${{ steps.tags.outputs.tags }}
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-        
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
       - name: List Tags
         id: tags
-        run: echo "$GITHUB_ENV" >> $GITHUB_ENV && echo "tags=$(git tag --sort=-creatordate)" >> $GITHUB_ENV
+        run: echo "::set-output name=tags::$(git tag --sort=-creatordate)"
 
       - name: Select Tag
         id: select-tag
         run: |
           echo "Available tags:"
-          for tag in ${{ env.tags }}; do
+          for tag in $SELECTED_TAG; do
             echo "- $tag"
           done
-        env:
-          SELECTED_TAG: ${{ steps.tags.outputs.tags }}
 
